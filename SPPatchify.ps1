@@ -977,7 +977,7 @@ function UpgradeContentSequentially() {
 
     Get-Job | Remove-Job
 
-    Write-Host "===== Upgrade Content Databases DONE ===== $(Get-Date)"
+    Write-Host "===== Upgrade Content Databases DONE ===== $(Get-Date)" -Fore "Yellow"
 }
 
 function UpgradeContent() {
@@ -1116,7 +1116,7 @@ function UpgradeContent() {
         $remain = $track |Where-Object {$_.status -ne "Completed" -and $_.status -ne "Failed"}
     }
     while ($remain)
-    Write-Host "===== Upgrade Content Databases DONE ===== $(Get-Date)"
+    Write-Host "===== Upgrade Content Databases DONE ===== $(Get-Date)" -Fore "Yellow"
     $track | Group-Object status | Format-Table -AutoSize
     $track | Format-Table -AutoSize
 	
