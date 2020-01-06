@@ -1398,7 +1398,7 @@ function ClearCacheIni() {
     # Start the SharePoint Timer Service on each server in the farm
     Write-Host "Change SPTimer to ON" -Fore Red
     ChangeSPTimer $true
-    Write-Host "Succeess" -Fore Green
+    Write-Host "Success" -Fore Green
 }
 
 # Stops the SharePoint Timer Service on each server in the SharePoint Farm.
