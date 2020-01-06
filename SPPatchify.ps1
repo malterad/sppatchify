@@ -1356,7 +1356,7 @@ function StartServiceInst() {
 
 function VerifyRemotePS() {
     try {
-        Write-Host "Test Remote PowerShell " -Fore Green
+        Write-Host "Test Remote PowerShell:"
         # Loop servers
         foreach ($server in $global:servers) {
             $addr = $server.Address
@@ -1376,7 +1376,7 @@ function VerifyRemotePS() {
                 }
             }
         }
-        Write-Host "Succeess" -Fore Green
+        Write-Host "Success" -Fore Green
         return $true
     }
     catch {
