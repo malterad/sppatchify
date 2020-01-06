@@ -52,6 +52,9 @@ param (
     [Parameter(Mandatory = $False, ValueFromPipeline = $false, HelpMessage = 'Use -o -onlineContent to keep content databases online.  Avoids Dismount/Mount.  NOTE - Will substantially increase patching duration for farms with more user content.')]
     [Alias("o")]
     [switch]$onlineContent,
+    
+    [Parameter(Mandatory = $False, ValueFromPipeline = $false, HelpMessage = 'Use -upgradeContentSequentially to perform upgrade of content databases sequentially (one database at a time)')]
+    [switch]$upgradeContentSequentially,
 
     [Parameter(Mandatory = $False, ValueFromPipeline = $false, HelpMessage = 'Use -remoteSessionPort to open PSSession (remoting) with custom port number.')]
     [string]$remoteSessionPort,
@@ -932,6 +935,51 @@ function ProductLocal() {
     (Get-SPProduct).Servers | Select-Object Servername, InstallStatus | Sort-Object Servername | Format-Table -AutoSize
 }
 
+function UpgradeContentSequentially() {
+    
+    Write-Host "===== Upgrade Content Databases ===== $(Get-Date)" -Fore "Yellow"
+
+    $dbs = Get-SPContentDatabase
+    
+    foreach ($db in $dbs) {
+
+        Write-Host ("Upgrading Content Database [{0}] " -f $db.Name) -NoNewline
+        
+        $id = $db.Id
+        
+        $script = "`$cmd = New-Object System.Diagnostics.ProcessStartInfo; " + 
+                    "`$cmd.FileName = 'powershell.exe'; " + 
+                    "`$internal = Add-PSSnapin Microsoft.SharePoint.Powershell -ErrorAction SilentlyContinue | Out-Null; Upgrade-SPContentDatabase -Id $id -Confirm:`$false; " + 
+                    "`$cmd.Arguments = '-NoProfile -Command ""$internal""'; " + 
+                    "[System.Diagnostics.Process]::Start(`$cmd);"
+        $scriptBlock = [Scriptblock]::Create($script)
+
+        # Clean up
+        Get-Job | Remove-Job
+
+        $job = Start-Job -ScriptBlock $scriptBlock
+        $id = $job.Id
+        
+        do {
+            $job = Get-Job $id
+            Write-Host "." -NoNewline
+            Sleep 10
+
+        } while ($job.State -eq "NotStarted" -or $job.State -eq "Running" )
+
+        if ($job.State -eq "Completed") {
+            Write-Host " Completed" -ForegroundColor Green
+        }
+        else {
+            Write-Host " $job.State" -ForegroundColor Red
+        }
+    }
+
+    Get-Job | Remove-Job
+
+    Write-Host "===== Upgrade Content Databases DONE ===== $(Get-Date)"
+}
+
 function UpgradeContent() {
     Write-Host "===== Upgrade Content Databases ===== $(Get-Date)" -Fore "Yellow"
 	
@@ -1727,7 +1775,12 @@ function Main() {
         if (!$onlineContent) {
             ChangeContent $true
         }
-        UpgradeContent
+        if ($upgradeContentSequentially) {
+            UpgradeContentSequentially
+        }
+        else {
+            UpgradeContent
+        }
         IISStart
         StartServiceInst
         DisplayCA
