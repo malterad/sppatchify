@@ -49,7 +49,7 @@ param (
     [Parameter(Mandatory = $False, ValueFromPipeline = $false, HelpMessage = 'Use -phaseThree to execute Phase Three attach and upgrade content.')]
     [switch]$phaseThree,
 	
-    [Parameter(Mandatory = $False, ValueFromPipeline = $false, HelpMessage = 'Use -o -onlineContent to keep content databases online.  Avoids Dismount/Mount.  NOTE - Will substantially increase patching duration for farms with more user content.')]
+    [Parameter(Mandatory = $False, ValueFromPipeline = $false, HelpMessage = 'Use -o or -onlineContent to keep content databases online.  Avoids Dismount/Mount.  NOTE - Will substantially increase patching duration for farms with more user content.')]
     [Alias("o")]
     [switch]$onlineContent,
     
@@ -62,7 +62,7 @@ param (
     [Parameter(Mandatory = $False, ValueFromPipeline = $false, HelpMessage = 'Use -remoteSessionSSL to open PSSession (remoting) with SSL encryption.')]
     [switch]$remoteSessionSSL,
 
-    [Parameter(Mandatory = $False, ValueFromPipeline = $false, HelpMessage = 'Use -test to open Remote PS Session and verify connectivity all farm members.')]
+    [Parameter(Mandatory = $False, ValueFromPipeline = $false, HelpMessage = 'Use -testRemotePS to open Remote PS Session and verify connectivity all farm members.')]
     [switch]$testRemotePS,
 
     [Parameter(Mandatory = $False, ValueFromPipeline = $false, HelpMessage = 'Use -skipProductLocal to run Phase One binary without Get-SPProduct -Local.')]
