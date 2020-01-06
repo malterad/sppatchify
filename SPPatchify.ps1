@@ -838,7 +838,7 @@ function DisplayCA() {
 	
     # Open Central Admin
     $ca = (Get-SPWebApplication -IncludeCentralAdministration) | Where-Object {$_.IsAdministrationWebApplication -eq $true}
-    $pages = @("PatchStatus.aspx", "UpgradeStatus.aspx", "FarmServers.aspx")
+    $pages = @("PatchStatus.aspx", "UpgradeStatus.aspx", "FarmServers.aspx", "DatabaseStatus.aspx")
     $pages | ForEach-Object {Start-Process ($ca.Url + "_admin/" + $_)}
 }
 function ShowVersion() {
